@@ -1,3 +1,5 @@
+//"એક custom Text component છે જે variant પ્રમાણે style change કરે છે (body, caption, error, label...)"
+
 import styled from "styled-components/native";
 
 const defaultTextStyles = (theme) => `
@@ -42,7 +44,7 @@ const variants = {
 
 export const Text = styled.Text`
   ${({ theme }) => defaultTextStyles(theme)}
-  ${({ variant, theme }) => variants[variant](theme)}
+  ${({ variant, theme }) => variants[variant]?.(theme)}
 `;
 
 Text.defaultProps = {

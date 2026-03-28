@@ -1,50 +1,74 @@
-import { FlatList } from "react-native";
-import { Searchbar } from "react-native-paper";
+//restaurants ની list બતાવે છે, loading handle કરે છે, search + favourites toggle આપે છે અને restaurant click કરતાં detail screen પર navigate કરે છે
+import { useContext, useState } from "react";
+import { TouchableOpacity } from "react-native";
 import { SafeArea } from "../../../components/utility/SafeArea";
-import RestaurantInfo from "../components/RestaurantInfo";
 import styled from "styled-components/native";
-import Spacer from "../../../components/spacer/Spacer";
+import { Spacer } from "../../../components/spacer/Spacer";
+import { FavouritesContext } from "../../../services/favourites/favouritesContext";
+import { ActivityIndicator } from "react-native-paper";
+import { Search } from "../components/SearchComponent";
+import RestaurantInfo from "../components/RestaurantInfo";
+import { FavouritesBar } from "../../../components/favourites/favouritesBarComponent";
+import { RestaurantsContext } from "../../../services/restaurants/RestaurantsContext";
+import { RestaurantList } from "../components/RestaurantInfoStyles";
+import { FadeInView } from "../../../components/animations/FadeAnimation";
 
-const SearchContainer = styled.View`
-  padding: ${(props) => props.theme.space[3]};
+const Loading = styled(ActivityIndicator)`
+  margin-left: -25px;
+`;
+const LoadingContainer = styled.View`
+  position: absolute;
+  top: 50%;
+  left: 50%;
 `;
 
-const RestaurantList = styled(FlatList).attrs({
-  contentContainerStyle: {
-    padding: 16,
-  },
-})``;
-
-const RestaurantsScreen = () => (
-  <SafeArea>
-    <SearchContainer>
-      <Searchbar />
-    </SearchContainer>
-    <RestaurantList
-      data={[
-        { name: 1 },
-        { name: 2 },
-        { name: 3 },
-        { name: 4 },
-        { name: 5 },
-        { name: 6 },
-        { name: 7 },
-        { name: 8 },
-        { name: 9 },
-        { name: 10 },
-        { name: 11 },
-        { name: 12 },
-        { name: 13 },
-        { name: 14 },
-      ]}
-      renderItem={() => (
-        <Spacer position="bottom" size="large">
-          <RestaurantInfo />
-        </Spacer>
+export const RestaurantsScreen = ({ navigation }) => {
+  const { isLoading, restaurants } = useContext(RestaurantsContext);
+  const [isToggled, setIsToggled] = useState(false);
+  const { favourites } = useContext(FavouritesContext);
+  return (
+    <SafeArea>
+      {isLoading && (
+        <LoadingContainer>
+          <Loading
+            size={50}
+            style={{ marginLeft: -25 }}
+            animating={true}
+            color="blue"
+          />
+        </LoadingContainer>
       )}
-      keyExtractor={(item) => item.name}
-    />
-  </SafeArea>
-);
-
-export default RestaurantsScreen;
+      <Search
+        isFavouritesToggle={isToggled}
+        onFavouritesToggle={() => setIsToggled(!isToggled)}
+      />
+      {isToggled && (
+        <FavouritesBar
+          favourites={favourites}
+          onNavigate={navigation.navigate}
+        />
+      )}
+      <RestaurantList
+        data={restaurants}
+        renderItem={({ item }) => {
+          return (
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("RestaurantDetail", {
+                  restaurant: item,
+                })
+              }
+            >
+              <Spacer position="bottom" size="large">
+                <FadeInView>
+                  <RestaurantInfo restaurant={item} />
+                </FadeInView>
+              </Spacer>
+            </TouchableOpacity>
+          );
+        }}
+        keyExtractor={(item) => item.name}
+      />
+    </SafeArea>
+  );
+};

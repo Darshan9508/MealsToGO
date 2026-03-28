@@ -1,6 +1,6 @@
 import styled from "styled-components/native";
 import { Card } from "react-native-paper";
-
+import { FlatList } from "react-native";
 export const Icon = styled.Image`
   width: 15px;
   height: 15px;
@@ -40,3 +40,8 @@ export const SectionEnd = styled.View`
   flex-direction: row;
   justify-content: flex-end;
 `;
+export const RestaurantList = styled(FlatList).attrs({
+  contentContainerStyle: {
+    padding: 16,
+  },
+})``;

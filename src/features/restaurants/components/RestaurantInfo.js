@@ -1,7 +1,9 @@
+//restaurant નો full card UI બતાવે છે (image, name, rating, open/close status, address + favourite button)
 import star from "../../../../assets/star";
 import { SvgXml } from "react-native-svg";
 import open from "../../../../assets/open";
-import Spacer from "../../../components/spacer/Spacer";
+import { Spacer } from "../../../components/spacer/Spacer";
+import { Favourite } from "../../../components/favourites/favouritesComponent";
 import {
   RestaurantCard,
   RestaurantCardCover,
@@ -21,33 +23,41 @@ const RestaurantInfo = ({ restaurant = {} }) => {
     photos = [
       "https://pub-aaa82e9851064d22b954c3ebbafc9ae6.r2.dev/legacy/webp/cozy-dining-experience-in-modern-restaurant-ISr-sWW2nZR05CwibOqkf.webp",
     ],
-    address = "100 some random street",
+    address,
     isOpenNow = true,
-    rating = 4,
+    rating,
     isClosedTemporarily = true,
+    placeId,
   } = restaurant;
 
   const ratingArray = Array.from(new Array(Math.floor(rating)));
 
   return (
     <RestaurantCard elevation={5}>
+      <Favourite restaurant={restaurant} />
       <RestaurantCardCover key={name} source={{ uri: photos[0] }} />
+
       <Info>
         <Text variant="label">{name}</Text>
         <Section>
           <Rating>
             {ratingArray.map((_, i) => (
-              <SvgXml key={i} xml={star} width={20} height={20} />
+              <SvgXml
+                key={`star-${placeId}-${i}`}
+                xml={star}
+                width={20}
+                height={20}
+              />
             ))}
           </Rating>
           <SectionEnd>
             {isClosedTemporarily && (
               <Text variant="error">CLOSED TEMPORARILY</Text>
             )}
-            <Spacer position="left" sizes="large">
+            <Spacer position="left" size="large">
               {isOpenNow && <SvgXml xml={open} width={20} height={20} />}
             </Spacer>
-            <Spacer position="left" sizes="large">
+            <Spacer position="left" size="large">
               <Icon source={{ uri: icon }} />
             </Spacer>
           </SectionEnd>
